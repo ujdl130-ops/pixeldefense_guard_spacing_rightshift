@@ -978,8 +978,9 @@ function castHolySlash() {
 
 function spawnEnemy() {
   const wave = gameState.wave;
-  const isBrute = wave >= 2 && Math.random() < 0.32;
-  const isFast = wave >= 3 && Math.random() < 0.25;
+  const isStageOne = Number(gameState.stage) === 1;
+  const isBrute = !isStageOne && wave >= 2 && Math.random() < 0.32;
+  const isFast = !isStageOne && wave >= 3 && Math.random() < 0.25;
 
   if (isBrute) {
     gameState.enemies.push({
