@@ -162,7 +162,7 @@ const GUARD_SPRITE = {
   fps: { idle: 5, walk: 8, attack: 11, death: 6 },
   rows: { idle: 0, walk: 1, attack: 2, death: 4 },
   frames: { idle: 6, walk: 6, attack: 6, death: 6 },
-  baseOffset: { x: 4, y: 0 },
+  baseOffset: { x: 8, y: 0 },
   offsets: {
     idle: [
       { x: -6, y: 0 },
