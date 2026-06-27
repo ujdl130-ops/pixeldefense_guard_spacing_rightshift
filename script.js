@@ -72,7 +72,7 @@ const ASSET_PATHS = {
   archerSprite: "assets/animations/archer/elf_archer_guard_size_spritesheet.png",
   guardSprite: "assets/animations/guard/guard_spritesheet_v2.png",
   mageSprite: "assets/animations/mage/red_wizard_spritesheet.png",
-  saintessSprite: "assets/animations/saintess/saintess_spritesheet.png",
+  saintessSprite: "assets/animations/saintess/saintess_spritesheet_aligned.png",
   heroSprite: "assets/animations/hero/zeus_hero_spritesheet_latest_transparent_aligned.png",
   stage1EnemySprite: "assets/animations/enemy/stage1_goblin_spritesheet.png",
   stage1ForestBg: "assets/maps/stage1/stage1_forest_bg_v2.png",
