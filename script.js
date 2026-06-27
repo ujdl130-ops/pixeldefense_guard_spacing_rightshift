@@ -70,6 +70,7 @@ const ASSET_PATHS = {
   archerSprite: "assets/animations/archer/archer_spritesheet_v2.png",
   guardSprite: "assets/animations/guard/guard_spritesheet_v2.png",
   heroSprite: "assets/animations/hero/zeus_hero_spritesheet_latest_transparent_aligned.png",
+  stage1EnemySprite: "assets/animations/enemy/stage1_goblin_spritesheet.png",
   stage1ForestBg: "assets/maps/stage1/stage1_forest_bg_v2.png",
   playerCastle: "assets/maps/stage1/player_castle_stage1.png",
   enemyCastle: "assets/maps/stage1/enemy_castle_stage1.png",
@@ -121,6 +122,15 @@ loadGameImage(
   [ASSET_PATHS.guardSprite],
   (ready) => { guardSpriteReady = ready; },
   "방패병 SD 기사 스프라이트"
+);
+
+const stage1EnemySprite = new Image();
+let stage1EnemySpriteReady = false;
+loadGameImage(
+  stage1EnemySprite,
+  [ASSET_PATHS.stage1EnemySprite],
+  (ready) => { stage1EnemySpriteReady = ready; },
+  "Stage 1 enemy sprite"
 );
 
 const stage1ForestBg = new Image();
@@ -231,6 +241,43 @@ const HERO_ZEUS_SPRITE = {
     { x: 0, y: 0 },
     { x: 0, y: -1 },
   ],
+};
+
+const STAGE1_ENEMY_SPRITE = {
+  columns: 6,
+  rowCount: 3,
+  rows: { walk: 0, attack: 1, death: 2 },
+  frames: { walk: 6, attack: 6, death: 6 },
+  fps: { walk: 8, attack: 11, death: 8 },
+  drawW: 124,
+  drawH: 94,
+  healthBarOffsetY: 96,
+  offsets: {
+    walk: [
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+    ],
+    attack: [
+      { x: 0, y: 0 },
+      { x: -3, y: 0 },
+      { x: -6, y: 0 },
+      { x: -9, y: 0 },
+      { x: -5, y: 0 },
+      { x: -2, y: 0 },
+    ],
+    death: [
+      { x: 0, y: 0 },
+      { x: 0, y: 2 },
+      { x: 1, y: 4 },
+      { x: 2, y: 5 },
+      { x: 3, y: 5 },
+      { x: 3, y: 5 },
+    ],
+  },
 };
 
 
@@ -1024,10 +1071,10 @@ function spawnEnemy() {
     animTime: 0,
     moving: false,
     attackAnimTimer: 0,
-    attackAnimDuration: 0.34,
+    attackAnimDuration: isStageOne ? 0.48 : 0.34,
     dead: false,
     deathAnimTimer: 0,
-    deathAnimDuration: 0.55,
+    deathAnimDuration: isStageOne ? 0.8 : 0.55,
     deathRewarded: false,
   });
 }
@@ -1828,7 +1875,90 @@ function drawUnit(unit) {
   if (!isDying) drawHealthBar(unit.x, unit.y - 68, 42, unit.hp, unit.maxHp, "#68d8ff");
 }
 
+function canDrawStage1EnemySprite(enemy) {
+  return stage1EnemySpriteReady
+    && Number(gameState.stage) === 1
+    && enemy.type === "normal";
+}
+
+function drawStage1EnemySprite(enemy) {
+  if (!canDrawStage1EnemySprite(enemy)) return false;
+
+  let anim = "walk";
+  if (enemy.dead || enemy.hp <= 0) anim = "death";
+  else if (enemy.attackAnimTimer > 0) anim = "attack";
+
+  const frameCount = STAGE1_ENEMY_SPRITE.frames[anim] || 1;
+  const fps = STAGE1_ENEMY_SPRITE.fps[anim] || 8;
+  let frame = Math.floor((enemy.animTime || 0) * fps) % frameCount;
+
+  if (anim === "attack") {
+    const duration = enemy.attackAnimDuration || 0.48;
+    const progress = 1 - Math.max(0, enemy.attackAnimTimer || 0) / duration;
+    frame = Math.min(frameCount - 1, Math.max(0, Math.floor(progress * frameCount)));
+  } else if (anim === "death") {
+    const duration = enemy.deathAnimDuration || 0.8;
+    const progress = 1 - Math.max(0, enemy.deathAnimTimer || 0) / duration;
+    frame = Math.min(frameCount - 1, Math.max(0, Math.floor(progress * frameCount)));
+  }
+
+  const frameW = stage1EnemySprite.naturalWidth / STAGE1_ENEMY_SPRITE.columns;
+  const frameH = stage1EnemySprite.naturalHeight / STAGE1_ENEMY_SPRITE.rowCount;
+  const sx = frame * frameW;
+  const sy = STAGE1_ENEMY_SPRITE.rows[anim] * frameH;
+  const dw = STAGE1_ENEMY_SPRITE.drawW;
+  const dh = STAGE1_ENEMY_SPRITE.drawH;
+  const frameOffset = (STAGE1_ENEMY_SPRITE.offsets[anim] && STAGE1_ENEMY_SPRITE.offsets[anim][frame]) || { x: 0, y: 0 };
+
+  ctx.save();
+  ctx.translate(enemy.x, enemy.y);
+
+  if (anim === "death") {
+    const duration = enemy.deathAnimDuration || 0.8;
+    const progress = 1 - Math.max(0, enemy.deathAnimTimer || 0) / duration;
+    ctx.globalAlpha = Math.max(0.25, 1 - progress * 0.35);
+  }
+
+  ctx.fillStyle = "rgba(0,0,0,0.22)";
+  ctx.beginPath();
+  ctx.ellipse(0, 4, anim === "death" ? 34 : 28, 8, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.scale(-1, 1);
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(
+    stage1EnemySprite,
+    sx,
+    sy,
+    frameW,
+    frameH,
+    -dw / 2 + frameOffset.x,
+    -dh + 8 + frameOffset.y,
+    dw,
+    dh
+  );
+
+  ctx.restore();
+  return true;
+}
+
 function drawEnemy(enemy) {
+  const usedStage1Sprite = drawStage1EnemySprite(enemy);
+  if (usedStage1Sprite) {
+    const isDying = enemy.dead || enemy.hp <= 0;
+    if (!isDying) {
+      drawHealthBar(
+        enemy.x,
+        enemy.y - STAGE1_ENEMY_SPRITE.healthBarOffsetY,
+        46,
+        enemy.hp,
+        enemy.maxHp,
+        "#ff6868"
+      );
+    }
+    return;
+  }
+
   ctx.save();
   ctx.translate(enemy.x, enemy.y);
 
