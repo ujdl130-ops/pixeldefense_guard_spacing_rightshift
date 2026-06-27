@@ -67,7 +67,7 @@ const HERO_MAX_X = ENEMY_BASE_X - 74;
 const HERO_RESPAWN_SECONDS = 4;
 
 const ASSET_PATHS = {
-  archerSprite: "assets/animations/archer/archer_spritesheet_v2.png",
+  archerSprite: "assets/animations/archer/archer_spritesheet_latest.png",
   guardSprite: "assets/animations/guard/guard_spritesheet_v2.png",
   heroSprite: "assets/animations/hero/zeus_hero_spritesheet_latest_transparent_aligned.png",
   stage1EnemySprite: "assets/animations/enemy/stage1_goblin_spritesheet.png",
@@ -210,15 +210,14 @@ const GUARD_SPRITE = {
 };
 
 const ARCHER_SPRITE = {
-  // 6열 x 5행으로 다시 정렬한 궁수 전용 스프라이트 시트입니다.
-  // 각 프레임의 발 위치를 같은 기준선에 맞춰 걷기/공격 중 흔들림을 줄였습니다.
-  frameW: 229,
-  frameH: 229,
-  drawW: 90,
-  drawH: 90,
-  fps: { idle: 5, walk: 8, attack: 10, death: 6 },
-  rows: { idle: 0, walk: 1, attack: 2, death: 4 },
-  frames: { idle: 6, walk: 6, attack: 6, death: 6 },
+  // 6열 x 3행: walk / attack / death. Idle uses the first walk frame.
+  frameW: 242,
+  frameH: 362,
+  drawW: 96,
+  drawH: 144,
+  fps: { idle: 1, walk: 8, attack: 10, death: 6 },
+  rows: { idle: 0, walk: 0, attack: 1, death: 2 },
+  frames: { idle: 1, walk: 6, attack: 6, death: 6 },
 };
 
 
@@ -249,7 +248,7 @@ const STAGE1_ENEMY_SPRITE = {
   rows: { walk: 0, attack: 1, death: 2 },
   frames: { walk: 6, attack: 6, death: 6 },
   fps: { walk: 8, attack: 11, death: 8 },
-  drawW: 124,
+  drawW: 150,
   drawH: 94,
   healthBarOffsetY: 96,
   offsets: {
