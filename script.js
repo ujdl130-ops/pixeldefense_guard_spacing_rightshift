@@ -67,7 +67,7 @@ const HERO_MAX_X = ENEMY_BASE_X - 74;
 const HERO_RESPAWN_SECONDS = 4;
 
 const ASSET_PATHS = {
-  archerSprite: "assets/animations/archer/archer_spritesheet_latest.png",
+  archerSprite: "assets/animations/archer/elf_archer_guard_size_spritesheet.png",
   guardSprite: "assets/animations/guard/guard_spritesheet_v2.png",
   heroSprite: "assets/animations/hero/zeus_hero_spritesheet_latest_transparent_aligned.png",
   stage1EnemySprite: "assets/animations/enemy/stage1_goblin_spritesheet.png",
@@ -210,13 +210,13 @@ const GUARD_SPRITE = {
 };
 
 const ARCHER_SPRITE = {
-  // 6열 x 3행: walk / attack / death. Idle uses the first walk frame.
-  frameW: 242,
-  frameH: 362,
-  drawW: 96,
-  drawH: 144,
+  // 6 columns x 5 rows, aligned to the guard sprite frame size.
+  frameW: 229,
+  frameH: 229,
+  drawW: 88,
+  drawH: 88,
   fps: { idle: 1, walk: 8, attack: 10, death: 6 },
-  rows: { idle: 0, walk: 0, attack: 1, death: 2 },
+  rows: { idle: 0, walk: 1, attack: 2, death: 4 },
   frames: { idle: 1, walk: 6, attack: 6, death: 6 },
 };
 
