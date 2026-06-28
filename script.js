@@ -13,8 +13,17 @@ const summonGuardBtn = document.getElementById("summonGuardBtn");
 const summonArcherBtn = document.getElementById("summonArcherBtn");
 const summonMageBtn = document.getElementById("summonMageBtn");
 const summonSaintessBtn = document.getElementById("summonSaintessBtn");
-const summonThiefBtn = document.getElementById("summonThiefBtn");
+let summonThiefBtn = document.getElementById("summonThiefBtn");
 const skillBtn = document.getElementById("skillBtn"); // 현재 전투 개편으로 스킬 버튼은 사용하지 않습니다.
+
+if (!summonThiefBtn && skillBtn && skillBtn.parentElement) {
+  summonThiefBtn = document.createElement("button");
+  summonThiefBtn.id = "summonThiefBtn";
+  summonThiefBtn.type = "button";
+  summonThiefBtn.textContent = "도적 소환";
+  skillBtn.parentElement.insertBefore(summonThiefBtn, skillBtn);
+}
+
 const titleScreen = document.getElementById("titleScreen");
 const titleStartBtn = document.getElementById("titleStartBtn");
 const lobbyScreen = document.getElementById("lobbyScreen");
