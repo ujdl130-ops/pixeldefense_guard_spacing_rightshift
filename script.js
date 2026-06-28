@@ -4,6 +4,8 @@ const ctx = canvas.getContext("2d");
 const waveText = document.getElementById("waveText");
 const goldText = document.getElementById("goldText");
 const unitCountText = document.getElementById("unitCountText");
+const commandUnitText = document.getElementById("commandUnitText");
+const commandGoldText = document.getElementById("commandGoldText");
 const playerHpText = document.getElementById("playerHpText");
 const enemyHpText = document.getElementById("enemyHpText");
 
@@ -11,6 +13,8 @@ const gameOptionsBtn = document.getElementById("gameOptionsBtn");
 const gameOptionsMenu = document.getElementById("gameOptionsMenu");
 const optionStageSelectBtn = document.getElementById("optionStageSelectBtn");
 const optionRestartBtn = document.getElementById("optionRestartBtn");
+const moveLeftBtn = document.getElementById("moveLeftBtn");
+const moveRightBtn = document.getElementById("moveRightBtn");
 const startBtn = document.getElementById("startBtn");
 const restartBtn = document.getElementById("restartBtn");
 const summonGuardBtn = document.getElementById("summonGuardBtn");
@@ -969,10 +973,33 @@ function handleOptionRestart() {
   restartGame();
 }
 
+function bindHoldMovementButton(button, keyCode) {
+  if (!button) return;
+
+  const startMove = (event) => {
+    event.preventDefault();
+    if (isGameOptionsOpen()) return;
+    keys[keyCode] = true;
+  };
+  const stopMove = () => {
+    keys[keyCode] = false;
+  };
+
+  button.addEventListener("pointerdown", startMove);
+  button.addEventListener("pointerup", stopMove);
+  button.addEventListener("pointerleave", stopMove);
+  button.addEventListener("pointercancel", stopMove);
+  button.addEventListener("blur", stopMove);
+}
+
 function updateHud() {
+  const activeUnits = getActiveUnitCount();
+
   waveText.textContent = `${gameState.wave} / ${gameState.maxWave}`;
   goldText.textContent = Math.floor(gameState.gold);
-  if (unitCountText) unitCountText.textContent = `${getActiveUnitCount()} / ${MAX_SUMMONED_UNITS}`;
+  if (unitCountText) unitCountText.textContent = `${activeUnits} / ${MAX_SUMMONED_UNITS}`;
+  if (commandUnitText) commandUnitText.textContent = `${activeUnits} / ${MAX_SUMMONED_UNITS}`;
+  if (commandGoldText) commandGoldText.textContent = `${Math.floor(gameState.gold)}G`;
   playerHpText.textContent = Math.max(0, Math.ceil(gameState.playerBaseHp));
   enemyHpText.textContent = Math.max(0, Math.ceil(gameState.enemyBaseHp));
 }
@@ -990,6 +1017,80 @@ function showSummonLimitMessage() {
   if (!gameState) return;
   gameState.message = `소환 제한! 병사는 최대 ${MAX_SUMMONED_UNITS}명까지 유지됩니다.`;
   gameState.messageTimer = 1.25;
+}
+
+function renderCommandSlot(button, costText, countText, label, title) {
+  if (!button || !button.classList.contains("command-slot")) return;
+
+  button.setAttribute("aria-label", label);
+  button.title = title;
+  button.innerHTML = `
+    <span class="slot-icon" aria-hidden="true"></span>
+    <span class="slot-cost">${costText}</span>
+    <span class="slot-count">${countText}</span>
+  `;
+}
+
+function renderRoundCommand(button, labelText, label, title) {
+  if (!button || !button.classList.contains("battle-round-btn")) return;
+
+  button.setAttribute("aria-label", label);
+  button.title = title;
+  button.innerHTML = `
+    <span class="round-icon" aria-hidden="true"></span>
+    <span class="round-label">${labelText}</span>
+  `;
+}
+
+function refreshCommandButtonMarkup() {
+  const activeUnits = getActiveUnitCount();
+  const unitLimitReached = activeUnits >= MAX_SUMMONED_UNITS;
+  const slotText = unitLimitReached ? "MAX" : `${activeUnits}/${MAX_SUMMONED_UNITS}`;
+  const limitTitle = "아군 병사가 사망하면 다시 소환할 수 있습니다.";
+
+  renderCommandSlot(
+    summonGuardBtn,
+    "50",
+    slotText,
+    unitLimitReached ? `방패병 소환 제한 ${activeUnits}/${MAX_SUMMONED_UNITS}` : "방패병 소환",
+    unitLimitReached ? limitTitle : "방패병을 소환합니다."
+  );
+  renderCommandSlot(
+    summonArcherBtn,
+    "75",
+    slotText,
+    unitLimitReached ? `궁수 소환 제한 ${activeUnits}/${MAX_SUMMONED_UNITS}` : "궁수 소환",
+    unitLimitReached ? limitTitle : "궁수를 소환합니다."
+  );
+  renderCommandSlot(
+    summonMageBtn,
+    "100",
+    slotText,
+    unitLimitReached ? `마법사 소환 제한 ${activeUnits}/${MAX_SUMMONED_UNITS}` : "마법사 소환",
+    unitLimitReached ? limitTitle : "마법사를 소환합니다."
+  );
+  renderCommandSlot(
+    summonSaintessBtn,
+    "120",
+    slotText,
+    unitLimitReached ? `성녀 소환 제한 ${activeUnits}/${MAX_SUMMONED_UNITS}` : "성녀 소환",
+    unitLimitReached ? limitTitle : "주변 아군을 회복하는 성녀를 소환합니다."
+  );
+  renderCommandSlot(
+    summonThiefBtn,
+    "?",
+    "준비",
+    "도적 소환",
+    "도적 소환 기능은 준비 중입니다."
+  );
+
+  const hero = gameState && gameState.hero;
+  renderRoundCommand(
+    skillBtn,
+    hero && hero.dead ? `부활 ${Math.ceil(hero.respawnTimer)}` : "SPACE",
+    hero && hero.dead ? `영웅 부활 ${Math.ceil(hero.respawnTimer)}초` : "영웅 공격",
+    "메인 영웅이 가장 가까운 적에게 화살을 발사합니다."
+  );
 }
 
 function updateButtons() {
@@ -1042,6 +1143,7 @@ function updateButtons() {
     startBtn.disabled = gameState.running && !gameState.gameOver && !gameState.clear;
   }
   if (stageSelectBtn) stageSelectBtn.disabled = false;
+  refreshCommandButtonMarkup();
 }
 
 function spendGold(amount) {
@@ -2719,6 +2821,8 @@ if (startBtn) startBtn.addEventListener("click", () => startGame(selectedStage))
 if (gameOptionsBtn) gameOptionsBtn.addEventListener("click", toggleGameOptionsMenu);
 if (optionStageSelectBtn) optionStageSelectBtn.addEventListener("click", handleOptionStageSelect);
 if (optionRestartBtn) optionRestartBtn.addEventListener("click", handleOptionRestart);
+bindHoldMovementButton(moveLeftBtn, "ArrowLeft");
+bindHoldMovementButton(moveRightBtn, "ArrowRight");
 titleStartBtn.addEventListener("click", showLobby);
 if (lobbyBattleBtn) lobbyBattleBtn.addEventListener("click", showStageSelect);
 if (lobbyShopBtn) lobbyShopBtn.addEventListener("click", showShop);

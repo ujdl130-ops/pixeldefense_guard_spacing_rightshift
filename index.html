@@ -389,16 +389,58 @@
         <button id="optionStageSelectBtn" type="button">스테이지 선택</button>
         <button id="optionRestartBtn" type="button">재시작</button>
       </div>
-    </div>
 
-    <section class="controls">
-      <button id="summonGuardBtn" type="button">방패병 소환 50G</button>
-      <button id="summonArcherBtn" type="button">궁수 소환 75G</button>
-      <button id="summonMageBtn" type="button">마법사 소환 100G</button>
-      <button id="summonSaintessBtn" type="button">성녀 소환 120G</button>
-      <button id="summonThiefBtn" type="button">도적 소환</button>
-      <button id="skillBtn" type="button">영웅 공격 Space</button>
-    </section>
+      <section class="battle-command-panel" aria-label="전투 명령">
+        <div class="battle-command-top">
+          <span class="battle-meter left"><span id="commandUnitText">0 / 5</span></span>
+          <span class="battle-meter right"><span id="commandGoldText">100G</span></span>
+        </div>
+
+        <div class="battle-slot-row">
+          <button id="summonGuardBtn" class="command-slot slot-guard" type="button" aria-label="방패병 소환">
+            <span class="slot-icon" aria-hidden="true"></span>
+            <span class="slot-cost">50</span>
+            <span class="slot-count">0/5</span>
+          </button>
+          <button id="summonArcherBtn" class="command-slot slot-archer" type="button" aria-label="궁수 소환">
+            <span class="slot-icon" aria-hidden="true"></span>
+            <span class="slot-cost">75</span>
+            <span class="slot-count">0/5</span>
+          </button>
+          <button id="summonMageBtn" class="command-slot slot-mage" type="button" aria-label="마법사 소환">
+            <span class="slot-icon" aria-hidden="true"></span>
+            <span class="slot-cost">100</span>
+            <span class="slot-count">0/5</span>
+          </button>
+          <button id="summonSaintessBtn" class="command-slot slot-saintess" type="button" aria-label="성녀 소환">
+            <span class="slot-icon" aria-hidden="true"></span>
+            <span class="slot-cost">120</span>
+            <span class="slot-count">0/5</span>
+          </button>
+          <button id="summonThiefBtn" class="command-slot slot-thief" type="button" aria-label="도적 소환">
+            <span class="slot-icon" aria-hidden="true"></span>
+            <span class="slot-cost">?</span>
+            <span class="slot-count">준비</span>
+          </button>
+          <button class="command-slot is-locked" type="button" aria-label="잠김" disabled><span class="slot-lock" aria-hidden="true"></span></button>
+          <button class="command-slot is-locked" type="button" aria-label="잠김" disabled><span class="slot-lock" aria-hidden="true"></span></button>
+          <button class="command-slot is-locked" type="button" aria-label="잠김" disabled><span class="slot-lock" aria-hidden="true"></span></button>
+        </div>
+
+        <div class="battle-command-bottom">
+          <button id="moveLeftBtn" class="battle-arrow-btn arrow-left" type="button" aria-label="왼쪽 이동"><span aria-hidden="true"></span></button>
+          <button id="moveRightBtn" class="battle-arrow-btn arrow-right" type="button" aria-label="오른쪽 이동"><span aria-hidden="true"></span></button>
+          <div class="battle-round-group">
+            <button id="skillBtn" class="battle-round-btn round-hero" type="button" aria-label="영웅 공격">
+              <span class="round-icon" aria-hidden="true"></span>
+              <span class="round-label">SPACE</span>
+            </button>
+            <button class="battle-round-btn is-locked" type="button" aria-label="잠김" disabled><span class="round-lock" aria-hidden="true"></span></button>
+            <button class="battle-round-btn is-locked" type="button" aria-label="잠김" disabled><span class="round-lock" aria-hidden="true"></span></button>
+          </div>
+        </div>
+      </section>
+    </div>
 
     <section class="guide">
       <p><b>조작:</b> A/D 또는 ←/→ 메인 영웅 이동 · Space 메인 영웅 공격 · 1 방패병 소환 · 2 궁수 소환 · 3 마법사 소환 · 4 성녀 소환</p>
@@ -408,6 +450,6 @@
     </section>
   </main>
 
-  <script src="script.js?v=game-options"></script>
+  <script src="script.js?v=command-bar-v2"></script>
 </body>
 </html>
