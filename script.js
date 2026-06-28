@@ -7,6 +7,10 @@ const unitCountText = document.getElementById("unitCountText");
 const playerHpText = document.getElementById("playerHpText");
 const enemyHpText = document.getElementById("enemyHpText");
 
+const gameOptionsBtn = document.getElementById("gameOptionsBtn");
+const gameOptionsMenu = document.getElementById("gameOptionsMenu");
+const optionStageSelectBtn = document.getElementById("optionStageSelectBtn");
+const optionRestartBtn = document.getElementById("optionRestartBtn");
 const startBtn = document.getElementById("startBtn");
 const restartBtn = document.getElementById("restartBtn");
 const summonGuardBtn = document.getElementById("summonGuardBtn");
@@ -367,6 +371,7 @@ let gameState;
 let lastTime = 0;
 let animationId = null;
 let keys = {};
+let gameOptionsWasRunning = false;
 let recruitDoorState = {
   active: false,
   tapCount: 0,
@@ -520,6 +525,7 @@ function showStageLockedNotice(stageNumber) {
 }
 
 function showStageSelect() {
+  closeGameOptionsMenu(false);
   if (titleScreen) titleScreen.classList.add("is-hidden");
   if (lobbyScreen) lobbyScreen.classList.add("is-hidden");
   if (stageScreen) stageScreen.classList.remove("is-hidden");
@@ -880,6 +886,7 @@ function startGame(stageNumber = selectedStage) {
     return;
   }
 
+  closeGameOptionsMenu(false);
   resetGame();
   if (titleScreen) titleScreen.classList.add("is-hidden");
   if (lobbyScreen) lobbyScreen.classList.add("is-hidden");
@@ -899,6 +906,67 @@ function startGame(stageNumber = selectedStage) {
 
 function restartGame() {
   startGame(selectedStage);
+}
+
+function isGameOptionsOpen() {
+  return Boolean(gameOptionsMenu && !gameOptionsMenu.classList.contains("is-hidden"));
+}
+
+function closeGameOptionsMenu(resumeGame = true) {
+  if (!gameOptionsMenu) return;
+
+  gameOptionsMenu.classList.add("is-hidden");
+  if (gameOptionsBtn) {
+    gameOptionsBtn.classList.remove("is-active");
+    gameOptionsBtn.setAttribute("aria-expanded", "false");
+  }
+
+  if (
+    resumeGame
+    && gameOptionsWasRunning
+    && gameState
+    && !gameState.gameOver
+    && !gameState.clear
+  ) {
+    gameState.running = true;
+    gameState.message = "";
+    gameState.messageTimer = 0;
+    lastTime = performance.now();
+  }
+
+  gameOptionsWasRunning = false;
+  updateButtons();
+}
+
+function openGameOptionsMenu() {
+  if (!gameOptionsMenu || !gameState) return;
+
+  gameOptionsWasRunning = Boolean(gameState.running);
+  gameState.running = false;
+  gameState.message = "게임 일시정지";
+  gameState.messageTimer = 0;
+
+  gameOptionsMenu.classList.remove("is-hidden");
+  if (gameOptionsBtn) {
+    gameOptionsBtn.classList.add("is-active");
+    gameOptionsBtn.setAttribute("aria-expanded", "true");
+  }
+  updateButtons();
+}
+
+function toggleGameOptionsMenu() {
+  if (isGameOptionsOpen()) closeGameOptionsMenu(true);
+  else openGameOptionsMenu();
+}
+
+function handleOptionStageSelect() {
+  closeGameOptionsMenu(false);
+  showStageSelect();
+}
+
+function handleOptionRestart() {
+  closeGameOptionsMenu(false);
+  restartGame();
 }
 
 function updateHud() {
@@ -2611,6 +2679,14 @@ window.addEventListener("keydown", (event) => {
     return;
   }
 
+  if (isGameOptionsOpen()) {
+    if (event.code === "Escape") {
+      event.preventDefault();
+      closeGameOptionsMenu(true);
+    }
+    return;
+  }
+
   keys[event.code] = true;
 
   if (event.code === "Space") {
@@ -2640,6 +2716,9 @@ window.addEventListener("keyup", (event) => {
 });
 
 if (startBtn) startBtn.addEventListener("click", () => startGame(selectedStage));
+if (gameOptionsBtn) gameOptionsBtn.addEventListener("click", toggleGameOptionsMenu);
+if (optionStageSelectBtn) optionStageSelectBtn.addEventListener("click", handleOptionStageSelect);
+if (optionRestartBtn) optionRestartBtn.addEventListener("click", handleOptionRestart);
 titleStartBtn.addEventListener("click", showLobby);
 if (lobbyBattleBtn) lobbyBattleBtn.addEventListener("click", showStageSelect);
 if (lobbyShopBtn) lobbyShopBtn.addEventListener("click", showShop);
