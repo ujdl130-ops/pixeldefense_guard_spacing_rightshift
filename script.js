@@ -77,7 +77,7 @@ const chapterBackBtn = document.getElementById("chapterBackBtn");
 const stageSelectNotice = document.getElementById("stageSelectNotice");
 const stageCards = document.querySelectorAll(".stage-card");
 
-const GROUND_Y = 410;
+const GROUND_Y = 300;
 const PLAYER_BASE_X = 40;
 const ENEMY_BASE_X = 900;
 const MAX_WAVE = 3;
