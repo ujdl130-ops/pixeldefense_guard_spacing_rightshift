@@ -23,6 +23,7 @@ const summonMageBtn = document.getElementById("summonMageBtn");
 const summonSaintessBtn = document.getElementById("summonSaintessBtn");
 let summonThiefBtn = document.getElementById("summonThiefBtn");
 const skillBtn = document.getElementById("skillBtn"); // 현재 전투 개편으로 스킬 버튼은 사용하지 않습니다.
+const zeusSkillBtn = document.getElementById("zeusSkillBtn");
 
 if (!summonThiefBtn && skillBtn && skillBtn.parentElement) {
   summonThiefBtn = document.createElement("button");
@@ -1032,10 +1033,22 @@ function renderCommandSlot(button, costText, countText, label, title) {
 }
 
 function renderRoundCommand(button, labelText, label, title) {
-  if (!button || !button.classList.contains("battle-round-btn")) return;
+  if (!button) return;
 
   button.setAttribute("aria-label", label);
   button.title = title;
+
+  if (button.classList.contains("zeus-action-btn")) {
+    const isSkill = button.classList.contains("zeus-skill-btn");
+    button.innerHTML = `
+      <span class="zeus-action-icon ${isSkill ? "skill" : "basic"}" aria-hidden="true"></span>
+      <span class="zeus-action-label">${isSkill ? "제우스 스킬" : "기본공격"}</span>
+      <span class="zeus-action-key">${labelText}</span>
+    `;
+    return;
+  }
+
+  if (!button.classList.contains("battle-round-btn")) return;
   button.innerHTML = `
     <span class="round-icon" aria-hidden="true"></span>
     <span class="round-label">${labelText}</span>
@@ -1091,6 +1104,12 @@ function refreshCommandButtonMarkup() {
     hero && hero.dead ? `영웅 부활 ${Math.ceil(hero.respawnTimer)}초` : "영웅 공격",
     "메인 영웅이 가장 가까운 적에게 화살을 발사합니다."
   );
+  renderRoundCommand(
+    zeusSkillBtn,
+    "READY",
+    "제우스 스킬",
+    "제우스 스킬 기능은 준비 중입니다."
+  );
 }
 
 function updateButtons() {
@@ -1132,11 +1151,19 @@ function updateButtons() {
   if (skillBtn) {
     const hero = gameState.hero;
     const heroReady = hero && !hero.dead && hero.hp > 0 && hero.cooldown <= 0;
-    skillBtn.textContent = hero && hero.dead
-      ? `영웅 부활 ${Math.ceil(hero.respawnTimer)}초`
-      : "영웅 공격 Space";
+    if (!skillBtn.classList.contains("zeus-action-btn")) {
+      skillBtn.textContent = hero && hero.dead
+        ? `영웅 부활 ${Math.ceil(hero.respawnTimer)}초`
+        : "영웅 공격 Space";
+    }
     skillBtn.disabled = disabled || !heroReady;
     skillBtn.title = "메인 영웅이 가장 가까운 적에게 화살을 발사합니다.";
+  }
+  if (zeusSkillBtn) {
+    const hero = gameState.hero;
+    const heroReady = hero && !hero.dead && hero.hp > 0;
+    zeusSkillBtn.disabled = disabled || !heroReady;
+    zeusSkillBtn.title = "제우스 스킬 기능은 준비 중입니다.";
   }
   if (startBtn) {
     startBtn.textContent = gameState.running ? "진행 중" : "게임 시작";
@@ -1300,6 +1327,12 @@ function summonSaintess() {
 function showThiefSummonPlaceholder() {
   if (!gameState || !gameState.running || gameState.gameOver || gameState.clear) return;
   gameState.message = "도적 소환은 아직 준비 중입니다.";
+  gameState.messageTimer = 1.25;
+}
+
+function showZeusSkillPlaceholder() {
+  if (!gameState || !gameState.running || gameState.gameOver || gameState.clear) return;
+  gameState.message = "제우스 스킬은 아직 준비 중입니다.";
   gameState.messageTimer = 1.25;
 }
 
@@ -2870,6 +2903,7 @@ if (summonMageBtn) summonMageBtn.addEventListener("click", summonMage);
 if (summonSaintessBtn) summonSaintessBtn.addEventListener("click", summonSaintess);
 if (summonThiefBtn) summonThiefBtn.addEventListener("click", showThiefSummonPlaceholder);
 if (skillBtn) skillBtn.addEventListener("click", castHolySlash);
+if (zeusSkillBtn) zeusSkillBtn.addEventListener("click", showZeusSkillPlaceholder);
 // 전투 개편: 캔버스 터치 직접 공격은 제거했습니다.
 
 resetGame();

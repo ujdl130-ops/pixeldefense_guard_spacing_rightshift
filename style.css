@@ -534,7 +534,100 @@ canvas {
 .battle-round-group {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 12px;
+}
+
+.zeus-action-btn {
+  position: relative;
+  width: 128px;
+  height: 52px;
+  border: 4px solid #211c18;
+  background: linear-gradient(180deg, #f8fbff, #91d7ff 52%, #327bc2);
+  box-shadow:
+    inset 0 4px 0 rgba(255, 255, 255, 0.62),
+    inset 0 -8px 0 rgba(0, 0, 0, 0.2),
+    3px 5px 0 rgba(0, 0, 0, 0.24);
+  color: #15192a;
+  overflow: hidden;
+}
+
+.zeus-skill-btn {
+  background: linear-gradient(180deg, #fff6a8, #ffb72e 56%, #c76b16);
+}
+
+.zeus-action-btn:disabled {
+  opacity: 0.56;
+}
+
+.zeus-action-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  width: 35px;
+  height: 12px;
+  background: #26272d;
+  border: 2px solid #070707;
+  transform: translateY(-50%) rotate(-30deg);
+}
+
+.zeus-action-icon::after {
+  content: "";
+  position: absolute;
+  right: -13px;
+  top: -5px;
+  width: 16px;
+  height: 16px;
+  background: #f3fbff;
+  border: 2px solid #070707;
+  transform: rotate(45deg);
+}
+
+.zeus-action-icon.skill {
+  width: 24px;
+  height: 24px;
+  background: #72f7ff;
+  border-color: #fff7b5;
+  box-shadow: 0 0 12px rgba(112, 247, 255, 0.9);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.zeus-action-icon.skill::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: -18px;
+  width: 5px;
+  height: 56px;
+  background: #fff7b5;
+  box-shadow: -10px 12px 0 -1px #ffffff, 12px 6px 0 -1px #ffffff;
+  transform: rotate(-45deg);
+}
+
+.zeus-action-icon.skill::after {
+  display: none;
+}
+
+.zeus-action-label,
+.zeus-action-key {
+  position: absolute;
+  right: 9px;
+  font-weight: 900;
+  text-align: right;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.zeus-action-label {
+  top: 9px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.zeus-action-key {
+  bottom: 7px;
+  color: #fff6bd;
+  font-size: 10px;
+  line-height: 1;
+  text-shadow: 2px 2px 0 #000;
 }
 
 .battle-round-btn {
@@ -680,7 +773,34 @@ canvas {
   }
 
   .battle-round-group {
-    gap: 8px;
+    gap: 6px;
+  }
+
+  .zeus-action-btn {
+    width: 76px;
+    height: 34px;
+    border-width: 3px;
+  }
+
+  .zeus-action-icon {
+    left: 10px;
+    transform: translateY(-50%) rotate(-30deg) scale(0.66);
+  }
+
+  .zeus-action-icon.skill {
+    transform: translateY(-50%) rotate(45deg) scale(0.62);
+  }
+
+  .zeus-action-label {
+    top: 6px;
+    right: 5px;
+    font-size: 9px;
+  }
+
+  .zeus-action-key {
+    right: 5px;
+    bottom: 5px;
+    font-size: 7px;
   }
 
   .battle-round-btn {

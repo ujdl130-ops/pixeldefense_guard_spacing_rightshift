@@ -431,12 +431,16 @@
           <button id="moveLeftBtn" class="battle-arrow-btn arrow-left" type="button" aria-label="왼쪽 이동"><span aria-hidden="true"></span></button>
           <button id="moveRightBtn" class="battle-arrow-btn arrow-right" type="button" aria-label="오른쪽 이동"><span aria-hidden="true"></span></button>
           <div class="battle-round-group">
-            <button id="skillBtn" class="battle-round-btn round-hero" type="button" aria-label="영웅 공격">
-              <span class="round-icon" aria-hidden="true"></span>
-              <span class="round-label">SPACE</span>
+            <button id="skillBtn" class="zeus-action-btn zeus-basic-btn" type="button" aria-label="제우스 기본공격">
+              <span class="zeus-action-icon basic" aria-hidden="true"></span>
+              <span class="zeus-action-label">기본공격</span>
+              <span class="zeus-action-key">SPACE</span>
             </button>
-            <button class="battle-round-btn is-locked" type="button" aria-label="잠김" disabled><span class="round-lock" aria-hidden="true"></span></button>
-            <button class="battle-round-btn is-locked" type="button" aria-label="잠김" disabled><span class="round-lock" aria-hidden="true"></span></button>
+            <button id="zeusSkillBtn" class="zeus-action-btn zeus-skill-btn" type="button" aria-label="제우스 스킬">
+              <span class="zeus-action-icon skill" aria-hidden="true"></span>
+              <span class="zeus-action-label">제우스 스킬</span>
+              <span class="zeus-action-key">READY</span>
+            </button>
           </div>
         </div>
       </section>
@@ -450,6 +454,6 @@
     </section>
   </main>
 
-  <script src="script.js?v=raised-battle-line"></script>
+  <script src="script.js?v=zeus-action-buttons"></script>
 </body>
 </html>
