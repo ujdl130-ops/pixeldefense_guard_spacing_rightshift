@@ -13,6 +13,7 @@ const summonGuardBtn = document.getElementById("summonGuardBtn");
 const summonArcherBtn = document.getElementById("summonArcherBtn");
 const summonMageBtn = document.getElementById("summonMageBtn");
 const summonSaintessBtn = document.getElementById("summonSaintessBtn");
+const summonThiefBtn = document.getElementById("summonThiefBtn");
 const skillBtn = document.getElementById("skillBtn"); // 현재 전투 개편으로 스킬 버튼은 사용하지 않습니다.
 const titleScreen = document.getElementById("titleScreen");
 const titleStartBtn = document.getElementById("titleStartBtn");
@@ -944,6 +945,12 @@ function updateButtons() {
     summonSaintessBtn.title = unitLimitReached ? "아군 병사가 사망하면 다시 소환할 수 있습니다." : "주변 아군을 회복하는 성녀를 소환합니다.";
   }
 
+  if (summonThiefBtn) {
+    summonThiefBtn.textContent = "도적 소환";
+    summonThiefBtn.disabled = disabled;
+    summonThiefBtn.title = "도적 소환 기능은 준비 중입니다.";
+  }
+
   if (skillBtn) {
     const hero = gameState.hero;
     const heroReady = hero && !hero.dead && hero.hp > 0 && hero.cooldown <= 0;
@@ -1109,6 +1116,12 @@ function summonSaintess() {
     deathAnimDuration: 0.85,
     deathRewarded: false,
   });
+}
+
+function showThiefSummonPlaceholder() {
+  if (!gameState || !gameState.running || gameState.gameOver || gameState.clear) return;
+  gameState.message = "도적 소환은 아직 준비 중입니다.";
+  gameState.messageTimer = 1.25;
 }
 
 
@@ -2663,6 +2676,7 @@ summonGuardBtn.addEventListener("click", summonGuard);
 summonArcherBtn.addEventListener("click", summonArcher);
 if (summonMageBtn) summonMageBtn.addEventListener("click", summonMage);
 if (summonSaintessBtn) summonSaintessBtn.addEventListener("click", summonSaintess);
+if (summonThiefBtn) summonThiefBtn.addEventListener("click", showThiefSummonPlaceholder);
 if (skillBtn) skillBtn.addEventListener("click", castHolySlash);
 // 전투 개편: 캔버스 터치 직접 공격은 제거했습니다.
 
