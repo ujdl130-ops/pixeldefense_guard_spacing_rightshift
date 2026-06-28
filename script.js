@@ -2639,7 +2639,7 @@ window.addEventListener("keyup", (event) => {
   keys[event.code] = false;
 });
 
-startBtn.addEventListener("click", () => startGame(selectedStage));
+if (startBtn) startBtn.addEventListener("click", () => startGame(selectedStage));
 titleStartBtn.addEventListener("click", showLobby);
 if (lobbyBattleBtn) lobbyBattleBtn.addEventListener("click", showStageSelect);
 if (lobbyShopBtn) lobbyShopBtn.addEventListener("click", showShop);
@@ -2679,7 +2679,7 @@ if (chapterBackBtn) chapterBackBtn.addEventListener("click", showStageSelect);
 stageCards.forEach((card) => {
   card.addEventListener("click", () => openStage(Number(card.dataset.stage)));
 });
-restartBtn.addEventListener("click", restartGame);
+if (restartBtn) restartBtn.addEventListener("click", restartGame);
 if (stageSelectBtn) stageSelectBtn.addEventListener("click", showStageSelect);
 summonGuardBtn.addEventListener("click", summonGuard);
 summonArcherBtn.addEventListener("click", summonArcher);
